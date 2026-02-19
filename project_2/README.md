@@ -35,11 +35,15 @@ A rank-15 deviation matrix is maintained alongside the diagonal statistics. Each
 **Inference — Bayesian Model Averaging.**
 40 networks are sampled from the SWAG posterior. Batch normalisation statistics are recomputed from training data for each sample. Predictions are averaged, giving calibrated probability estimates. Any prediction whose maximum probability falls below **2/3** is returned as "don't know" (−1).
 
-![Reliability diagram for MAP baseline](plots/reliability_diagram.png)
+![Reliability diagrams: MAP vs Full SWAG](plots/reliability_diagram.png)
 
-The reliability diagram above shows the MAP baseline (ECE ≈ 0.19): the model is overconfident in the top buckets. SWAG's posterior averaging flattens this gap, bringing ECE below the 0.1 threshold.
+The reliability diagrams compare MAP (left) and Full SWAG (right). MAP is overconfident in the high-confidence buckets (ECE ≈ 0.19). SWAG's posterior averaging flattens this gap, bringing ECE below the 0.1 threshold.
 
-![Prediction confidence distribution](plots/confidence_histogram.png)
+![Prediction confidence distribution: MAP vs SWAG](plots/confidence_histogram.png)
+
+The confidence histograms show how SWAG spreads probability mass more evenly: fewer predictions are pinned at very high confidence, and ambiguous samples are pushed below the "don't know" threshold more reliably.
+
+![Most and least confident SWAG predictions](plots/most_least_confident.png)
 
 ## Results
 
@@ -55,7 +59,7 @@ The reliability diagram above shows the MAP baseline (ECE ≈ 0.19): the model i
 # Install dependencies
 pip install -r requirements.txt
 
-# Generate plots (fast — MAP inference only, no SWAG training)
+# Generate all plots (MAP + SWAG; SWAG trains once, then cached)
 python visualize.py
 
 # Run the full SWAG solution (called by the course checker)
@@ -72,7 +76,7 @@ python solution.py
 |---|---|
 | `solution.py` | Full SWAG implementation: `SWAInferenceHandler`, `CNN`, training and BMA inference |
 | `util.py` | Helpers: ECE computation, reliability diagram painter, calibration curve, seed setup |
-| `visualize.py` | Generates exploratory and evaluation plots using MAP weights (no SWAG training) |
+| `visualize.py` | Generates MAP and SWAG plots; caches SWAG predictions for fast re-runs |
 | `requirements.txt` | Python dependencies |
 | `data/train_xs.npz` | Training images (N × 3 × 60 × 60) |
 | `data/train_ys.npz` | Training labels, snow/cloud flags |

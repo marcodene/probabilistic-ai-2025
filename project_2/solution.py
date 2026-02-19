@@ -624,7 +624,7 @@ class SWAGScheduler(torch.optim.lr_scheduler.LRScheduler):
     ):
         self.epochs = epochs
         self.steps_per_epoch = steps_per_epoch
-        super().__init__(optimizer, last_epoch=-1, verbose=False)
+        super().__init__(optimizer, last_epoch=-1)
 
     def get_lr(self):
         if not self._get_lr_called_within_step:
