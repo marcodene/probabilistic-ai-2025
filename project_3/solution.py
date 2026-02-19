@@ -149,6 +149,8 @@ class BO_algo():
         # 2. Combine G_t and M_t to get all valid target indices
         # (self.G is already computed in your code)
         valid_set = np.union1d(self.G, M_indices).astype(int)
+        if len(valid_set) == 0:
+            valid_set = self.S  # fallback to full safe set
 
         # 3. Store the coordinates of these valid points for the acquisition function
         self.valid_coords = self.grid[valid_set]
@@ -161,9 +163,7 @@ class BO_algo():
         best_local_idx = np.argmin(dists)
         best_grid_idx = self.S[best_local_idx]
         
-        return self.grid[best_grid_idx]
-
-        raise NotImplementedError
+        return np.array([[self.grid[best_grid_idx]]])
 
     def optimize_acquisition_function(self):
         """Optimizes the acquisition function defined below (DO NOT MODIFY).
@@ -249,9 +249,10 @@ class BO_algo():
             SA constraint func
         """
         # DONE: Add the observed data {x, f, v} to your model.
+        x = float(np.atleast_1d(x).ravel()[0])
 
         # add points to the model
-        self.sampled_points = np.vstack([self.sampled_points, [x]])
+        self.sampled_points = np.vstack([self.sampled_points, [[x]]])
         self.obj_values = np.vstack([self.obj_values, [f]])
         self.SA_values = np.vstack([self.SA_values, [v]]) 
 
@@ -384,8 +385,8 @@ def main():
             f"shape (1, {DOMAIN.shape[0]})"
 
         # Obtain objective and constraint observation
-        obj_val = f(x) + np.randn()
-        cost_val = v(x) + np.randn()
+        obj_val = f(x) + np.random.randn()
+        cost_val = v(x) + np.random.randn()
         agent.add_data_point(x, obj_val, cost_val)
 
     # Validate solution
