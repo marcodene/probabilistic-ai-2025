@@ -39,9 +39,9 @@ def main():
         " are ignored when generating your submission file."
     )
 
-    data_location = pathlib.Path.cwd()
-    model_location = pathlib.Path.cwd()
-    output_location = pathlib.Path.cwd()
+    data_location = pathlib.Path(__file__).parent / "data"
+    model_location = pathlib.Path(__file__).parent / "data"
+    output_location = pathlib.Path(__file__).parent / "plots"
 
     # Load training data
     training_images = torch.from_numpy(np.load(data_location / "train_xs.npz")["train_xs"])
